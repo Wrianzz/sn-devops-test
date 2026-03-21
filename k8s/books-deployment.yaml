@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: books
-        image: wrianzz/bookslib-books-service:latest
+        image: wrianzz/bookslib-books-service:5
         imagePullPolicy: Always
         env:
         - name: PG_USER
