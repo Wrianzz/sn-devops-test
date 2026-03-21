@@ -16,7 +16,7 @@ spec:
       - name: auth
         image: wrianzz/bookslib-auth-service:4
         imagePullPolicy: Always
-      env:
+        env:
         - name: DB_HOST
           value: "postgres"
         - name: POSTGRES_USER
