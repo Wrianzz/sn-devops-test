@@ -16,7 +16,7 @@ spec:
       - name: reviews
         image: wrianzz/bookslib-reviews-service:4
         imagePullPolicy: Always
-      env:
+        env:
         - name: DB_HOST
           value: "postgres"
         - name: POSTGRES_USER
