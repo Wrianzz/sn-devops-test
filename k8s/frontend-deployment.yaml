@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: wrianzz/bookslib-frontend:latest
+        image: wrianzz/bookslib-frontend:4
         imagePullPolicy: Always
         ports:
         - containerPort: 80 # Sesuaikan jika frontend jalan di port lain

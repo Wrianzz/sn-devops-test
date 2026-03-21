@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: reviews
-        image: wrianzz/bookslib-reviews-service:latest
+        image: wrianzz/bookslib-reviews-service:4
         imagePullPolicy: Always
       env:
         - name: DB_HOST

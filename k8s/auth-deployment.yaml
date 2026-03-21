@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: auth
-        image: wrianzz/bookslib-auth-service:latest
+        image: wrianzz/bookslib-auth-service:4
         imagePullPolicy: Always
       env:
         - name: DB_HOST
