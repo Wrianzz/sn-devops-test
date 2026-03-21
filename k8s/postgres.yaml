@@ -8,6 +8,16 @@ stringData:
   POSTGRES_PASSWORD: password123
   POSTGRES_DB: bookslib
 ---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-init-script
+data:
+  init.sql: |
+    CREATE DATABASE auth_db;
+    CREATE DATABASE books_db;
+    CREATE DATABASE reviews_db;
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -30,6 +40,14 @@ spec:
             name: postgres-secret
         ports:
         - containerPort: 5432
+        volumeMounts:
+        - name: init-script
+          mountPath: /docker-entrypoint-initdb.d/init.sql
+          subPath: init.sql
+      volumes:
+      - name: init-script
+        configMap:
+          name: postgres-init-script
 ---
 apiVersion: v1
 kind: Service
