@@ -14,26 +14,21 @@ spec:
     spec:
       containers:
       - name: books
-        image: wrianzz/bookslib-books-service:4
+        image: wrianzz/bookslib-books-service:latest
         imagePullPolicy: Always
         env:
-        - name: DB_HOST
-          value: "postgres"
-        - name: POSTGRES_USER
+        - name: PG_USER
           valueFrom:
             secretKeyRef:
               name: postgres-secret
               key: POSTGRES_USER
-        - name: POSTGRES_PASSWORD
+        - name: PG_PASS
           valueFrom:
             secretKeyRef:
               name: postgres-secret
               key: POSTGRES_PASSWORD
-        - name: POSTGRES_DB
-          valueFrom:
-            secretKeyRef:
-              name: postgres-secret
-              key: POSTGRES_DB
+        - name: ConnectionStrings__DefaultConnection
+          value: "Host=postgres;Database=books_db;Username=$(PG_USER);Password=$(PG_PASS)"
         ports:
         - containerPort: 8080
 ---
