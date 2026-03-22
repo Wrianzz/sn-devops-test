@@ -288,9 +288,118 @@ Setelah deployment sukses, lakukan verifikasi berikut:
 - Pengguna dapat menambahkan ulasan dan rating.
 
 ---
+## 8. Kompromi Arsitektur pada Demo
+
+Karena demo dijalankan pada VM lokal dengan resource terbatas, beberapa kompromi arsitektur dilakukan agar sistem tetap bisa berjalan stabil dan tetap merepresentasikan desain intinya.
+
+### 8.1 Cluster HA disederhanakan menjadi single-node RKE2
+
+**Ideal production design:**
+
+- 3 control-plane node
+- 3 worker node
+- quorum etcd yang sehat
+- toleransi kegagalan node yang lebih baik
+
+**Implementasi demo:**
+
+- hanya 1 node RKE2 aktif untuk workload
+
+**Alasan kompromi:**
+
+- keterbatasan RAM dan CPU jika seluruh komponen HA dijalankan sekaligus di laptop/VM lokal
+
+**Dampak:**
+
+- tidak ada failover control-plane
+- bukan representasi penuh high-availability production
+- tetapi cukup untuk mendemonstrasikan GitOps, autoscaling, secret management, dan integrasi OIDC
+
+### 8.2 Database HA tidak memakai Patroni pada eksekusi demo
+
+**Ideal production design:**
+
+- PostgreSQL HA berbasis Patroni
+- replikasi dan failover database
+
+**Implementasi demo:**
+
+- PostgreSQL single replica pod
+
+**Alasan kompromi:**
+
+- komponen HA database cukup berat untuk resource lab kecil
+
+**Dampak:**
+
+- tidak ada failover database otomatis
+- tetap cukup untuk menunjukkan integrasi aplikasi dan alur secret injection dari Vault
+
+### 8.3 PAM / JumpServer tidak dijalankan secara penuh
+
+**Ideal production design:**
+
+- akses administratif melalui PAM/Bastion
+- MFA
+- audit session recording
+
+**Implementasi demo:**
+
+- PAM fisik tidak diaktifkan sebagai komponen terpisah
+
+**Alasan kompromi:**
+
+- beban RAM dan kompleksitas lab meningkat tajam bila seluruh komponen keamanan enterprise dijalankan bersamaan
+
+**Mitigasi pada demo:**
+
+- kontrol akses tetap didorong ke layer identitas melalui Keycloak OIDC
+- pendekatan *identity-based access control* tetap dipertahankan untuk komponen utama
+
+### 8.4 Akses aplikasi memakai IP langsung dan NodePort
+
+**Ideal production design:**
+
+- akses melalui load balancer / ingress / DNS internal
+- terminasi TLS yang lebih konsisten
+
+**Implementasi demo:**
+
+- frontend dan API diekspos menggunakan NodePort dan IP langsung
+
+**Alasan kompromi:**
+
+- menyederhanakan pengujian lab lokal
+- mengurangi kebutuhan setup DNS, ingress controller, dan sertifikat tambahan
+
+**Dampak:**
+
+- akses lebih sederhana untuk demonstrasi
+- tetapi tidak merepresentasikan jalur akses enterprise yang sepenuhnya production-grade
+
+### 8.5 Beberapa komponen management dicentralisasi pada satu node
+
+**Ideal production design:**
+
+- pemisahan lebih tegas antara management plane dan komponen pendukung
+
+**Implementasi demo:**
+
+- beberapa layanan management seperti Keycloak, Jenkins, Vault, dan akses Rancher dipusatkan pada node management
+
+**Alasan kompromi:**
+
+- efisiensi resource dan kemudahan observasi saat presentasi/demo
+
+**Dampak:**
+
+- jejak resource lebih hemat
+- isolasi antar-komponen tidak sekuat implementasi enterprise penuh
+
+---
 
 
-## 8. Nilai Teknis 
+## 9. Nilai Teknis 
 
 Walaupun dilakukan beberapa kompromi, demo ini tetap berhasil menunjukkan poin-poin penting berikut:
 
@@ -305,7 +414,7 @@ Walaupun dilakukan beberapa kompromi, demo ini tetap berhasil menunjukkan poin-p
 ---
 
 
-## 9. Kesimpulan
+## 10. Kesimpulan
 
 MVP ini berhasil membangun demonstrasi ekosistem DevOps yang cukup lengkap dalam skala lab lokal. Nilai utamanya bukan pada kemewahan jumlah node, melainkan pada integrasi antarkomponen yang tetap terjaga:
 
