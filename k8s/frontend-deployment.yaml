@@ -23,6 +23,18 @@ spec:
         imagePullPolicy: Always
         ports:
         - containerPort: 80 # Sesuaikan jika frontend jalan di port lain
+        resources:
+          requests:
+            cpu: "50m"
+            memory: "64Mi"
+          limits:
+            cpu: "200m"
+            memory: "128Mi"
+        readinessProbe:
+          tcpSocket:
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 10
 ---
 apiVersion: v1
 kind: Service
